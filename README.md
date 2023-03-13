@@ -2,5 +2,5 @@
 
 ### *Integrantes*
 - Salazar Nehemias
-- Scafati Salvor
+- Scafati Salvador
 - Simone Federico
