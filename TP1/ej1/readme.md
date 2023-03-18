@@ -7,4 +7,4 @@ en el cual el cliente pueda conectarse al server y enviar un mensaje
 y el servidor le responda lo mismo al cliente, tuvimos un par de inconvenientes al principio para compilar el programa con maven pero lo logramos y así quedo el resultado final.
 
 
-![Ejemplo del funcionamiento](https://github.com/Fedesin/sdypp-Salazar-Scafati-Simone/blob/main/TP1/ej1/Screenshot_20230313_181702.png)
+![Ejemplo del funcionamiento](https://github.com/Fedesin/sdypp-Salazar-Scafati-Simone/blob/main/TP1/ej1/Screenshot_20230317_204952.png)
