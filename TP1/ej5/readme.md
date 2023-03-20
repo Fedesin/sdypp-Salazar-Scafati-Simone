@@ -3,5 +3,5 @@
 
 Con la ayuda de chatgpt se genero un servidor http que devuelve de manera aleatoria, informacion del clima de manera muy sencilla. A continuacion adjunto capturas del mismo.
 
-![Ejemplo de funcionamento del ejercicio 5](https://github.com/Fedesin/sdypp-Salazar-Scafati-Simone/blob/main/TP1/ej5/Captura de pantalla 2023-03-20 175101.jpg)
+![Ejemplo de funcionamento del ejercicio 5](https://raw.githubusercontent.com/Fedesin/sdypp-Salazar-Scafati-Simone/main/TP1/ej5/Captura%20de%20pantalla%202023-03-20%20175101.jpg)
 
