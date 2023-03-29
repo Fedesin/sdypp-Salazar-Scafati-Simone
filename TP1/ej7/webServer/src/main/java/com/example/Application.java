@@ -25,70 +25,13 @@
  */
 
 package com.example;
-
-import java.net.*;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
 @SpringBootApplication
-public class Application {
+public class Application{
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
-    @PostMapping("/ejemplo")
-    public ResponseEntity<Object> procesarObjeto(@RequestBody String jsonString) {
-        Gson gson = new Gson();
-        try {
-            // Convierte el objeto JSON en un objeto Java
-            ObjetoJava objeto = gson.fromJson(jsonString, ObjetoJava.class);
-            
-            // Procesa el objeto Java
-            // ...
-            
-            // Devuelve una respuesta HTTP con un objeto JSON como cuerpo de respuesta
-            return ResponseEntity.ok(gson.toJson(objeto));
-        } catch (JsonSyntaxException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSON inválido: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor: " + e.getMessage());
-        }
-    }
 }
 
-class ObjetoJava {
-    // Atributos del objeto Java
-    private String atributo1;
-    private int atributo2;
-    
-    // Constructor y métodos getter y setter
-    public ObjetoJava(String atributo1, int atributo2) {
-        this.atributo1 = atributo1;
-        this.atributo2 = atributo2;
-    }
-    
-    public String getAtributo1() {
-        return atributo1;
-    }
-    
-    public void setAtributo1(String atributo1) {
-        this.atributo1 = atributo1;
-    }
-    
-    public int getAtributo2() {
-        return atributo2;
-    }
-    
-    public void setAtributo2(int atributo2) {
-        this.atributo2 = atributo2;
-    }
-}
