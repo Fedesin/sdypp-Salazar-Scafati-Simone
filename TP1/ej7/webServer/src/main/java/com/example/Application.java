@@ -34,37 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class Application{
 
     public static void main(String[] args) {
-        // SpringApplication.run(Application.class, args);
-        // //con el dato del header vamos a saber que docker levantar
-        // @PostMapping("/suma"){
-        //     //invocamos el contenedor suma
-        //     public String obtenerSuma(@RequestBody SumaDto suma) {
-        //         int resultado = suma.getNum1() + suma.getNum2();
-        //         return "La suma de " + suma.getNum1() + " y " + suma.getNum2() + " es: " + resultado;
-        //     }
-        // }
-        // @PostMapping("/saludo"){
-        //     //invocamos el contenedor saludo
-        // }
+        SpringApplication.run(Application.class, args);
     }
 }
-// public static class SumaDto {
-//     private int num1;
-//     private int num2;
 
-//     public int getNum1() {
-//         return num1;
-//     }
-
-//     public void setNum1(int num1) {
-//         this.num1 = num1;
-//     }
-
-//     public int getNum2() {
-//         return num2;
-//     }
-
-//     public void setNum2(int num2) {
-//         this.num2 = num2;
-//     }
-// }

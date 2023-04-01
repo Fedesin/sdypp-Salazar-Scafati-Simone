@@ -24,6 +24,8 @@
  * =====LICENSE-END=====
  */
 package com.example;
+import java.io.*;
+import java.net.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,29 +43,61 @@ public class Controlador{
 
     //ahora la suma se realiza recibiendo un json en el cuerpo
     @PostMapping("/suma")
-    public String obtenerSuma(@RequestBody SumaDto suma) {
-        int resultado = suma.getNum1() + suma.getNum2();
-        return "La suma de " + suma.getNum1() + " y " + suma.getNum2() + " es: " + resultado;
+    public String obtenerSuma(@RequestBody  String payload) throws IOException {
+        bashCommand command = new bashCommand("task");
+        command.dockerRun();
+        //enviar por parametros la tarea ejecutarTarea(suma.getNum1(),suma.getNum2());
+    //   command.dockerStop();
+    return "";
+    }    
+
+    public static class bashCommand {
+    private String dockerImage;    
+    
+    bashCommand(String dockerImage){
+        this.dockerImage = dockerImage;
     }
 
-    public static class SumaDto {
-        private int num1;
-        private int num2;
+    public void dockerRun() throws IOException {
+        int hostPort = this.findAvailablePort();
+        String dockerCommand = "docker run --rm -p "+ hostPort +":8080 " + this.dockerImage;
+        this.runCommand(dockerCommand);
+      
+    }
 
-        public int getNum1() {
-            return num1;
-        }
+    public void dockerStop() throws IOException {
+        String dockerCommand = "docker stop " + this.dockerImage;
+        this.runCommand(dockerCommand);
+    }
 
-        public void setNum1(int num1) {
-            this.num1 = num1;
-        }
 
-        public int getNum2() {
-            return num2;
-        }
+    private void runCommand(String dockerCommand) throws IOException {
+    // Start the Docker process
+    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", dockerCommand);
+    Process process = pb.start();
 
-        public void setNum2(int num2) {
-            this.num2 = num2;
-        }
+    // Read the output of the Docker process
+    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    String line;
+    while ((line = reader.readLine()) != null) {
+      System.out.println(line);
+    }
+
+    // Wait for the Docker process to finish
+    try {
+      int exitCode = process.waitFor();
+      System.out.println("Exited with error code " + exitCode);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    }
+
+    private static int findAvailablePort() throws IOException {
+    try (ServerSocket socket = new ServerSocket(0)) {
+      int port = socket.getLocalPort();
+      System.out.println("Using port " + port);
+      return port;
+    }
+    }
     }
 }
