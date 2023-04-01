@@ -26,78 +26,134 @@
 package com.example;
 import java.io.*;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.entity.StringEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.apache.http.NoHttpResponseException;
 
 @RestController
 public class Controlador{
 
-    @GetMapping("/saludo")
-    public String saludar() {
-        return "Hola desde mi servidor web Spring!";
-    }
-
     //ahora la suma se realiza recibiendo un json en el cuerpo
     @PostMapping("/suma")
-    public String obtenerSuma(@RequestBody  String payload) throws IOException {
+    public String obtenerSuma(@RequestBody  String payload) throws IOException,InterruptedException,Exception {
         bashCommand command = new bashCommand("task");
         command.dockerRun();
-        //enviar por parametros la tarea ejecutarTarea(suma.getNum1(),suma.getNum2());
-    //   command.dockerStop();
-    return "";
+        String message = command.genericTask(payload);
+        command.dockerStop();
+        return message;
     }    
 
     public static class bashCommand {
-    private String dockerImage;    
+    private String dockerImage;
+    private int hostPort;    
     
     bashCommand(String dockerImage){
         this.dockerImage = dockerImage;
     }
 
-    public void dockerRun() throws IOException {
-        int hostPort = this.findAvailablePort();
-        String dockerCommand = "docker run --rm -p "+ hostPort +":8080 " + this.dockerImage;
+
+    public void dockerRun() throws IOException,InterruptedException {
+        this.hostPort = this.findAvailablePort();
+        String dockerCommand = "docker run --rm -p "+ this.hostPort +":8080 " + this.dockerImage;
         this.runCommand(dockerCommand);
+        this.waitForContainer(this.hostPort);
       
     }
 
     public void dockerStop() throws IOException {
-        String dockerCommand = "docker stop " + this.dockerImage;
+        String dockerCommand = "docker stop $(docker ps -q -f 'publish'="+this.hostPort+")";
         this.runCommand(dockerCommand);
     }
 
 
     private void runCommand(String dockerCommand) throws IOException {
-    // Start the Docker process
+    System.out.println(dockerCommand);
     ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", dockerCommand);
     Process process = pb.start();
-
-    // Read the output of the Docker process
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    String line;
-    while ((line = reader.readLine()) != null) {
-      System.out.println(line);
     }
 
-    // Wait for the Docker process to finish
-    try {
-      int exitCode = process.waitFor();
-      System.out.println("Exited with error code " + exitCode);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    public void waitForContainer(int port) throws IOException, InterruptedException {
+        String healthcheckCommand = "while ! nc -z localhost " + port + "; do sleep 1; done";
+        Process process = Runtime.getRuntime().exec(new String[] {"/bin/bash", "-c", healthcheckCommand});
+        process.waitFor();
     }
 
     private static int findAvailablePort() throws IOException {
     try (ServerSocket socket = new ServerSocket(0)) {
       int port = socket.getLocalPort();
-      System.out.println("Using port " + port);
       return port;
+    }}
+
+    public String genericTask(String requestBody) throws Exception,InterruptedException {
+        //Espera a que el enpoint este listo para hacer peticiones
+        waitForEndpoint("http://localhost:"+this.hostPort+"/status");
+        // Crear cliente HTTP
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        try {
+            // Definir URL y cuerpo de la petición
+            HttpPost httpPost = new HttpPost("http://localhost:"+this.hostPort+"/suma");
+            httpPost.setHeader("Content-Type", "application/json");
+            System.out.println(requestBody);
+            StringEntity entity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
+            httpPost.setEntity(entity);
+
+            // Ejecutar petición
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+
+            try {
+                // Procesar respuesta
+                HttpEntity responseEntity = response.getEntity();
+                String responseBody = EntityUtils.toString(responseEntity);
+                System.out.println(responseBody);
+                return responseBody;
+            } finally {
+                response.close();
+            }
+        } finally {
+            httpClient.close();
+        }
+      }
+
+    public void waitForEndpoint(String url) throws InterruptedException {
+    HttpClient client = HttpClient.newHttpClient();
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .timeout(Duration.ofSeconds(1))
+            .GET()
+            .build();
+    boolean endpointAvailable = false;
+    while (!endpointAvailable) {
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                endpointAvailable = true;
+            }
+        } catch (Exception e) {
+            // Endpoint not available yet, wait and try again
+            Thread.sleep(1000);
+        }
     }
-    }
-    }
+}
+
+
+  }
 }
