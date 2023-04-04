@@ -1,4 +1,8 @@
-FROM openjdk:11-jdk-slim
+FROM openjdk:21-ea-11-slim-bullseye
+# Instalar Docker
+RUN apt-get update && \
+    apt-get install -y docker.io
+    RUN apt-get update && apt-get install -y netcat
 WORKDIR /app
 COPY target/demo-1.0-SNAPSHOT.jar /app/app.jar
 EXPOSE 8080

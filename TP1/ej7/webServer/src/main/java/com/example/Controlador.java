@@ -92,7 +92,7 @@ public class Controlador{
     }
 
     public void waitForContainer(int port) throws IOException, InterruptedException {
-        String healthcheckCommand = "while ! nc -z localhost " + port + "; do sleep 1; done";
+        String healthcheckCommand = "while ! nc -z host.docker.internal  " + port + "; do sleep 1; done";
         Process process = Runtime.getRuntime().exec(new String[] {"/bin/bash", "-c", healthcheckCommand});
         process.waitFor();
     }
@@ -105,14 +105,14 @@ public class Controlador{
 
     public String genericTask(String requestBody) throws Exception,InterruptedException {
         //Espera a que el enpoint este listo para hacer peticiones
-        waitForEndpoint("http://localhost:"+this.hostPort+"/status");
+        waitForEndpoint("http://host.docker.internal:"+this.hostPort+"/status");
         // Crear cliente HTTP
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             // Definir URL y cuerpo de la petición
-            HttpPost httpPost = new HttpPost("http://localhost:"+this.hostPort+"/suma");
+            HttpPost httpPost = new HttpPost("http://host.docker.internal:"+this.hostPort+"/suma");
             httpPost.setHeader("Content-Type", "application/json");
-            System.out.println(requestBody);
+            System.out.println("Request: "+requestBody);
             StringEntity entity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
             httpPost.setEntity(entity);
 
@@ -123,7 +123,7 @@ public class Controlador{
                 // Procesar respuesta
                 HttpEntity responseEntity = response.getEntity();
                 String responseBody = EntityUtils.toString(responseEntity);
-                System.out.println(responseBody);
+                System.out.println("Response: "+responseBody);
                 return responseBody;
             } finally {
                 response.close();
@@ -141,8 +141,10 @@ public class Controlador{
             .GET()
             .build();
     boolean endpointAvailable = false;
+    System.out.print("Contenedor tarea generica cargando:");
     while (!endpointAvailable) {
         try {
+            System.out.print(".");
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 endpointAvailable = true;
@@ -152,6 +154,7 @@ public class Controlador{
             Thread.sleep(1000);
         }
     }
+    System.out.println("");
 }
 
 
