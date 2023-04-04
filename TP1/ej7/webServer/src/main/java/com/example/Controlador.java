@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.apache.http.NoHttpResponseException;
+import com.github.dockerjava.api.DockerClient;
 
 @RestController
 public class Controlador{
@@ -73,7 +74,11 @@ public class Controlador{
 
     public void dockerRun() throws IOException,InterruptedException {
         this.hostPort = this.findAvailablePort();
-        String dockerCommand = "docker run --rm -p "+ this.hostPort +":8080 " + this.dockerImage;
+        //este comando nos va a servir cuando el servidor este dockerizado, realice la ejecución de manera local
+        //String dockerCommand = "docker run --rm -p -v "+ this.hostPort +":8080 "+"/sdypp/sdypp-Salazar-Scafati-Simone/TP1/ej7/task/"+this.dockerImage+":/app " + this.dockerImage;
+        //String dockerCommand = "docker run --rm -p -v "+ this.hostPort +":8080 " + "~/sdypp/sdypp-Salazar-Scafati-Simone/TP1/ej7/task/"+this.dockerImage+":/app/task task";
+        //Este comando nos sirve cuando ejecutamos el servidor NO dockerizado
+        String dockerCommand = "docker run --rm -p "+ this.hostPort +":8080 " + "fedesin31/sdypptp1task";
         this.runCommand(dockerCommand);
         this.waitForContainer(this.hostPort);
       
