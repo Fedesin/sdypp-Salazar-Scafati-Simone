@@ -56,7 +56,7 @@ public class Controlador{
     //ahora la suma se realiza recibiendo un json en el cuerpo
     @PostMapping("/suma")
     public String obtenerSuma(@RequestBody  String payload) throws IOException,InterruptedException,Exception {
-        bashCommand command = new bashCommand("task");
+        bashCommand command = new bashCommand("fedesin31/sdypptp1task");
         command.dockerRun();
         String message = command.genericTask(payload);
         command.dockerStop();
@@ -78,7 +78,7 @@ public class Controlador{
         //String dockerCommand = "docker run --rm -p -v "+ this.hostPort +":8080 "+"/sdypp/sdypp-Salazar-Scafati-Simone/TP1/ej7/task/"+this.dockerImage+":/app " + this.dockerImage;
         //String dockerCommand = "docker run --rm -p -v "+ this.hostPort +":8080 " + "~/sdypp/sdypp-Salazar-Scafati-Simone/TP1/ej7/task/"+this.dockerImage+":/app/task task";
         //Este comando nos sirve cuando ejecutamos el servidor NO dockerizado
-        String dockerCommand = "docker run --rm -p "+ this.hostPort +":8080 " + "fedesin31/sdypptp1task";
+        String dockerCommand = "docker run --rm -p "+ this.hostPort +":8080 " + this.dockerImage;
         this.runCommand(dockerCommand);
         this.waitForContainer(this.hostPort);
       
