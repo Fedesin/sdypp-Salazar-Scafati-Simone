@@ -14,7 +14,7 @@ public class Servidor {
 
         // Se espera la conexión del cliente
         socketCliente = servidorSocket.accept();
-        System.out.println("Cliente conectado: " + socketCliente);
+        System.out.println("- Cliente conectado: " + socketCliente);
 
         // Se crea un lector y un escritor para comunicarse con el cliente
         out = new PrintWriter(socketCliente.getOutputStream(), true);
@@ -22,11 +22,13 @@ public class Servidor {
 
         String inputLine, outputLine;
         // Se espera a recibir un mensaje del cliente
-        while ((inputLine = in.readLine()) != null) {
+        while (!(inputLine = in.readLine()).equals("exit")) {
             System.out.println("Mensaje recibido del cliente: " + inputLine);
             // Se responde al cliente con el mismo mensaje
             out.println(inputLine);
         }
+
+        System.out.println("- Conexion finalizada con cliente: " + socketCliente);
 
         // Se cierran los recursos
         out.close();
