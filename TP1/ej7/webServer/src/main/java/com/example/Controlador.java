@@ -53,6 +53,16 @@ import com.github.dockerjava.api.DockerClient;
 @RestController
 public class Controlador{
 
+
+    @GetMapping("/saludo")
+    public String obtenerSaludo() throws IOException,InterruptedException,Exception {
+        bashCommand command = new bashCommand("fedesin31/saludo");
+        command.dockerRun();
+        String message = command.genericTaskGET("");
+        command.dockerStop();
+        return message;
+    }  
+
     //ahora la suma se realiza recibiendo un json en el cuerpo
     @PostMapping("/suma")
     public String obtenerSuma(@RequestBody  String payload) throws IOException,InterruptedException,Exception {
@@ -107,6 +117,37 @@ public class Controlador{
       int port = socket.getLocalPort();
       return port;
     }}
+
+
+    public String genericTaskGET(String requestBody) throws Exception, InterruptedException {
+        // Espera a que el enpoint este listo para hacer peticiones
+        waitForEndpoint("http://host.docker.internal:"+this.hostPort+"/statusSaludo");
+    
+        // Crear cliente HTTP
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        try {
+            // Definir URL y cuerpo de la petición
+            HttpGet httpGet = new HttpGet("http://host.docker.internal:"+this.hostPort+"/saludo");
+    
+            // Establecer el tipo de contenido en la solicitud
+            httpGet.setHeader("Content-Type", "application/json");
+    
+            // Ejecutar petición
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+            try {
+                // Procesar respuesta
+                HttpEntity responseEntity = response.getEntity();
+                String responseBody = EntityUtils.toString(responseEntity);
+                System.out.println("Response: "+responseBody);
+                return responseBody;
+            } finally {
+                response.close();
+            }
+        } finally {
+            httpClient.close();
+        }
+    }
+
 
     public String genericTask(String requestBody) throws Exception,InterruptedException {
         //Espera a que el enpoint este listo para hacer peticiones
