@@ -27,36 +27,88 @@
 package com.example;
 
 import java.net.*;
+import java.util.*;
 
 public class Application {
-    private static final int PUERTO_SERVIDOR = 5001;
-    private static final int TAM_BUFFER = 1024;
+
+    final static short MAX_BUFFER = 1024;
 
     public static void main(String[] args) throws Exception {
-        DatagramSocket servidorSocket = new DatagramSocket(PUERTO_SERVIDOR);
-        byte[] buffer;
+        
+        // Instancio el socket del server que va a estar 'en escucha' a la espera de clientes
+        DatagramSocket serverSocket = new DatagramSocket(4444);
 
-        System.out.println("Servidor UDP escuchando en el puerto " + PUERTO_SERVIDOR + "...");
+        System.out.println("Servidor escuchando en el puerto 4444...");
 
         while (true) {
-            buffer = new byte[TAM_BUFFER];
-            DatagramPacket paquete = new DatagramPacket(buffer, buffer.length);
-            servidorSocket.receive(paquete);
 
-            // Convertir los bytes recibidos en un string
-            String mensaje = new String(paquete.getData()).trim();
+            // Instancio el datagrama, le indico la estructura de datos que va a recibir lo que envie el 
+            // cliente y la longitud del buffer de entrada
+            DatagramPacket receivePacket = new DatagramPacket(new byte[MAX_BUFFER], MAX_BUFFER);
 
-            // Mostrar el mensaje recibido
-            System.out.println("Mensaje recibido: " + mensaje);
+            // Acepto el nuevo datagrama enviado 
+            serverSocket.receive(receivePacket);
 
-            // Preparar la respuesta
-            InetAddress direccionCliente = paquete.getAddress();
-            int puertoCliente = paquete.getPort();
-            buffer = mensaje.getBytes();
-            paquete = new DatagramPacket(buffer, buffer.length, direccionCliente, puertoCliente);
+            // Instancio un nuevo hilo para atender al cliente
+            Thread thread = new Thread(new ClientHandler(serverSocket, receivePacket));
 
-            // Enviar la respuesta al cliente
-            servidorSocket.send(paquete);
+            // Inicio el hilo
+            thread.start();
+        }
+    }
+}
+
+class ClientHandler implements Runnable {
+    private DatagramSocket serverSocket;
+    private DatagramPacket receivePacket;
+
+    public ClientHandler(DatagramSocket serverSocket, DatagramPacket receivePacket) {
+        this.serverSocket = serverSocket;
+        this.receivePacket = receivePacket;
+    }
+
+    public void run() {
+
+        try {
+            
+            // Obtengo la direccion IP origen
+            InetAddress clientAddress = receivePacket.getAddress();
+
+            // Obtengo el puerto origen
+            int clientPort = receivePacket.getPort();
+
+            // Obtengo los datos enviados por el cliente en el datagrama
+            String sentence = new String(receivePacket.getData()).trim();
+
+            // Mientras el cliente no envie 'exit' sigo esperando mensajes
+            do {
+
+                System.out.println("Se recibio de: " + clientAddress + ":" + clientPort + " - " + sentence);
+
+                // Almaceno los datos enviados por el cliente en un array de bytes
+                byte[] sendData = sentence.getBytes();
+
+                // Instancio un nuevo datagrama para reenviar los datos al cliente
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, clientAddress, clientPort);
+                
+                // Envio el datagrama al socket del cliente
+                serverSocket.send(sendPacket);
+
+                // Instancio un nuevo datagrama 
+                DatagramPacket receivePacket = new DatagramPacket(new byte[Application.MAX_BUFFER], Application.MAX_BUFFER);
+
+                // Acepto el nuevo datagrama enviado 
+                serverSocket.receive(receivePacket);          
+
+                sentence = new String(receivePacket.getData()).trim();
+
+            } while(!sentence.equals("exit"));
+
+            System.out.println("- No se espera recibir mas mensajes del cliente: " + clientAddress + ":" + clientPort);
+
+        } catch (Exception error) {
+            System.out.println(" Error: " + error.getMessage());
+            System.exit(0);
         }
     }
 }
