@@ -5,13 +5,13 @@ import java.util.*;
 public class MultiuserQueueTCPServer {
     public static void main(String[] args) {
         
-        System.out.println(" Server address : ");
+        System.out.println(" Direccion IP servidor : ");
         String serverAddress = new Scanner(System.in).nextLine();
         
-        System.out.println(" Server port : ");
+        System.out.println(" Puerto servidor : ");
         Integer serverPort = new Scanner(System.in).nextInt(); 
 
-        System.out.println(" Number of concurrent costumers : ");
+        System.out.println(" Numero de clientes simultaneos : ");
         Integer serverBacklog = new Scanner(System.in).nextInt(); 
 
         try {
@@ -19,7 +19,7 @@ public class MultiuserQueueTCPServer {
             // Iniciamos el server en el socket indicado.
             ServerSocket serverSocket = new ServerSocket(serverPort, serverBacklog, InetAddress.getByName(serverAddress));
             
-            System.out.println(" Server started! ");
+            System.out.println(" Servidor iniciado! ");
 
             // HashMap donde se tiene por valor de "key" el socket destinatario 
             // y de "value" una cola de mensajes asociados.
@@ -30,7 +30,7 @@ public class MultiuserQueueTCPServer {
                 // Acepto la conexion del nuevo cliente.
                 Socket clientSocket = serverSocket.accept();
                 
-                System.out.println(" Client connected from : " + clientSocket.getLocalAddress().getHostAddress() + ":" + clientSocket.getPort());
+                System.out.println(" Cliente conectado : " + clientSocket.getLocalAddress().getHostAddress() + ":" + clientSocket.getPort());
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, serverSocket, messageHashMap);
                 
@@ -127,12 +127,13 @@ class ClientHandler extends Thread {
                     if(messageHashMap.containsKey(clientHashKey)) {
                         readPendingMessages(clientWriter, messageHashMap.get(clientHashKey));
                     } else {
-                        clientWriter.println(" - No messages found - ");
+                        clientWriter.println(" - No se encontraron mensajes - ");
+
                     }
                 }
 
                 if(operationToDo.equals("exit")) {
-                    System.out.println(" - Connection finished - ");
+                    System.out.println(" - Conexion finalizada- ");
                     break;
                 }
 

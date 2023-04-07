@@ -6,21 +6,20 @@ public class TCPClient {
 
     public void writeMessage(BufferedReader serverReader, PrintWriter serverWriter, BufferedReader reader) {
 
-        System.out.println(" Destiny client address : ");
+        System.out.println(" Direccion IP cliente : ");
         String destinyAddress = new Scanner(System.in).nextLine();
         
-        System.out.println(" Destiny client port : ");
+        System.out.println(" Puerto cliente : ");
         Integer destinyPort = new Scanner(System.in).nextInt();
 
         try {
 
             serverWriter.println(destinyAddress + ":" + destinyPort);
 
-            System.out.print(" Message to : " + destinyAddress + ":" + destinyPort + " (exit to leave) \n");
+            System.out.print(" Mensaje para : " + destinyAddress + ":" + destinyPort + " ('exit' para salir) \n");
 
             do {
 
-                System.out.print(" Enter message : ");
                 String message = reader.readLine();
         
                 if(message == null || message.equals("exit")) {
@@ -32,7 +31,7 @@ public class TCPClient {
             
             } while(true);
 
-            System.out.print(" - Finished chat - \n");
+            System.out.print(" - Chat finalizado - \n");
 
         } catch(IOException e) {
             System.out.println(" Error: " + e.getMessage());
@@ -63,16 +62,16 @@ public class TCPClient {
         // For calling no static methods
         TCPClient tcpClient = new TCPClient();
 
-        System.out.println(" Source client address : ");
+        System.out.println(" Direccion IP cliente : ");
         String sourceAddress = new Scanner(System.in).nextLine();
         
-        System.out.println(" Source client port : ");
+        System.out.println(" Puerto cliente : ");
         Integer sourcePort = new Scanner(System.in).nextInt();
 
-        System.out.println(" Server address : ");
+        System.out.println(" Direccion IP servidor : ");
         String serverAddress = new Scanner(System.in).nextLine();
         
-        System.out.println(" Server port : ");
+        System.out.println(" Puerto servidor : ");
         Integer serverPort = new Scanner(System.in).nextInt(); 
 
         try {
@@ -82,11 +81,11 @@ public class TCPClient {
 
             // Si el socket del servidor es inexistente.
             if(!serverSocket.isConnected()) {
-                System.out.println(" Unreacheable server! ");
+                System.out.println(" Servidor no encontrado! ");
                 System.exit(0); 
             }
 
-            System.out.println(" Connection accepted! ");
+            System.out.println(" Conexion aceptada! ");
     
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -96,7 +95,7 @@ public class TCPClient {
             
             do {
 
-                System.out.println("\n Want to write a message, read pending ones or exit? (write/read/exit) \n");
+                System.out.println("\n Desea escribir(wriite), leer(read) o salir(exit)? (write/read/exit) \n");
 
                 String operationToDo = new Scanner(System.in).nextLine();
                 
