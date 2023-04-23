@@ -36,11 +36,28 @@ import org.springframework.web.bind.annotation.RestController;
 public class MaestroController {
 
     @PostMapping("/registrarse")
-    public ResponseEntity<String> recibirRegistro(@RequestBody String mensaje){
-            
+    public ResponseEntity<String> recibirRegistro(@RequestBody Extremo extremo){
+    
+         //Guardar en DB   
     }
     
+public class extremo {
+    private String host;
+    private int port;
 
+    public extremo(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    public String host() {
+        return this.host;
+    }
+
+    public int port() {
+        return this.port;
+    }
+}
     @PostMapping("/mensaje")
     public ResponseEntity<String> recibirMensaje(@RequestBody String mensaje) {
         System.out.println("Mensaje recibido: " + mensaje);
