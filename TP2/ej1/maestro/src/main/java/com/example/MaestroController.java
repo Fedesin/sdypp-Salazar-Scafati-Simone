@@ -1,4 +1,4 @@
-/*-
+/*
  * =====LICENSE-START=====
  * Java 11 Application
  * ------
@@ -32,8 +32,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/microservicio1")
+@RequestMapping("/maestro")
 public class MaestroController {
+
+    @PostMapping("/registrarse")
+    public ResponseEntity<String> recibirRegistro(@RequestBody String mensaje){
+            
+    }
+    
 
     @PostMapping("/mensaje")
     public ResponseEntity<String> recibirMensaje(@RequestBody String mensaje) {

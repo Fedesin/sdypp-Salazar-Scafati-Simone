@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import io.github.cdimascio.dotenv.Dotenv;
+
 
 @SpringBootApplication
 public class Application{
@@ -39,8 +41,24 @@ public class Application{
         return new RestTemplate();
     }
     public static void main(String[] args) {
+        Dotenv dotenv = Dotenv.load();
+        registrarme();
         System.setProperty("server.port", "8081");
         SpringApplication.run(Application.class, args);
     }
+    public void registrarme(){
+        URL microservicio1Url = New URL("http://localhost:8080/maestro/registrarse");
+        //enviar la ip y el puerto del microservicio extremo
+        //le enviamos el json con la ip al maestro 
+        //este responde 200 ok
+        // y ahí nosotros guardamos la ip que nos respondio el 200 ok ahí ya tendriamos asociado 
+        // el extremo con el maestro
+        HttpURLConnection con = (HttpURLConnection) microservicio1Url.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setDoOutput(true);
+        OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
+        out.write(json);
+        out.close();
 }
 
