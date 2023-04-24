@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 public class FileController {
     
+    /*
+    curl -X POST -H "Content-Type: multipart/form-data" -F "file=@archivo.txt" http://localhost:8081/cargar
+    */
     @PostMapping("/cargar")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
@@ -62,6 +65,9 @@ public class FileController {
             //---
     }
 
+    /*
+    curl -o archivo.txt http://localhost:8081/descargar?nombre=archivo.txt
+    */
    @GetMapping("/descargar")
     public ResponseEntity<Resource> descargar(@RequestParam(name = "nombre") String nombreArchivo) {
     // Obtener el archivo del servidor a partir del nombre
