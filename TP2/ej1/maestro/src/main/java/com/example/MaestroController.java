@@ -41,7 +41,7 @@ public class MaestroController {
         try {
             // deberiamos guardar el archivo y la dir del extremo en la BD
             String filename = file.getOriginalFilename();
-            Path filepath = Paths.get("./archivos", filename);
+            //Path filepath = Paths.get("./archivos", filename);
             String extremoUrl = extremo.host();
             extremoUrl += ":"+maestro.port();
             //acá deberia ir la conexion a la bd
