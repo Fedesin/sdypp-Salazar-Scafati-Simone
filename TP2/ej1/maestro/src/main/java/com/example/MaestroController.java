@@ -34,26 +34,32 @@ import main.java.com.example.Extremo;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import org.springframework.http.HttpStatus;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.google.gson.Gson;
+import java.util.Map;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import main.java.com.example.ActualizarRequest;
 
 @RestController
 @RequestMapping("/maestro")
 public class MaestroController {
 
-    @PostMapping("/actualizar")
-    public ResponseEntity<String> actualizar(@RequestParam("file") String filename,@RequestBody Extremo extremo) {
-     //   try {
-            // deberiamos guardar el archivo y la dir del extremo en la BD
-            //Path filepath = Paths.get("./archivos", filename);
-            String extremoUrl = extremo.host();
-            extremoUrl += ":"+extremo.port();
-            System.out.println("200 ok");
-            //acá deberia ir la conexion a la bd 
-            return ResponseEntity.ok("Archivo "+filename+" recibido correctamente, lo envio el extremo: "+extremoUrl+".");
-        /*} catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el archivo");
-        }*/
-    }
+    @Autowired
+    private HttpServletRequest request;
+    //
+    @PostMapping(value = "/actualizar", produces = "text/plain")
+    public ResponseEntity<String> actualizar(@RequestBody ActualizarRequest request) {
+        String filename = request.getFilename();
+        String hostExt = request.getHostExtremo();
+        int portExt = request.getPortExtremo();
+        String extremoUrl = hostExt + ":" + portExt;
+        System.out.println("200 ok");
+        //acá deberia ir la conexion a la bd 
+        return ResponseEntity.ok("Archivo "+filename+" recibido correctamente, lo envio el extremo: "+extremoUrl+".");
+}
+
     @PostMapping("/mensaje")
     public ResponseEntity<String> recibirMensaje(@RequestBody String mensaje) {
         System.out.println("Mensaje recibido: " + mensaje);
