@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import com.example.Maestro;
 
 @RestController
 public class FileController {
@@ -32,12 +33,19 @@ public class FileController {
     curl -X POST -H "Content-Type: multipart/form-data" -F "file=@archivo.txt" http://localhost:8081/cargar
     */
     @PostMapping("/cargar")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,@RequestBody Maestro maestro) {
         try {
             // Guardar el archivo en la carpeta especificada
             String filename = file.getOriginalFilename();
             Path filepath = Paths.get("./archivos", filename);
             Files.write(filepath, file.getBytes());
+            
+            String maestroUrl = maestro.host();
+            maestroUrl += ":"+maestro.port()+"/actualizar";
+
+            String respuesta = restTemplate.postForObject(maestroUrl, file, String.class);
+            return "Archivo enviado correctamente: " + filename + "\nRespuesta del maestro "+maestro.host()+": " + respuesta;
+            
             //---
             // FALTA HACER EL POST /Actualizar al maestro
             // enviar nombre del archivo,ip y puerto del extremo

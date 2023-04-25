@@ -35,12 +35,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/maestro")
 public class MaestroController {
 
-    @PostMapping("/registrarse")
-    public ResponseEntity<String> recibirRegistro(@RequestBody Extremo extremo){
-    
-         //Guardar en DB   
+    @PostMapping("/actualizar")
+    public ResponseEntity<String> recibirMensaje(@RequestParam("file") MultipartFile file,@RequestBody Extremo extremo) {
+        try {
+            // deberiamos guardar el archivo y la dir del extremo en la BD
+            String filename = file.getOriginalFilename();
+            Path filepath = Paths.get("./archivos", filename);
+            String extremoUrl = extremo.host();
+            extremoUrl += ":"+maestro.port();
+            //acá deberia ir la conexion a la bd
+            return ResponseEntity.ok("Archivo "+filename+" recibido correctamente, lo envio el extremo: "+extremoUrl+".");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el archivo");
+        }
+        return ResponseEntity.ok("Archivo recibido y guardado correctamente");
     }
-    
 public class extremo {
     private String host;
     private int port;
