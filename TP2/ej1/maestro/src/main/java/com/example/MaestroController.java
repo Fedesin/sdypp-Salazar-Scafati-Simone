@@ -46,16 +46,20 @@ import com.example.ActualizarRequest;
 public class MaestroController {
 
     @Autowired
+    private PostgresController postgresController;
+
+    @Autowired
     private HttpServletRequest request;
     //
     @PostMapping(value = "/actualizar", produces = "text/plain")
     public ResponseEntity<String> actualizar(@RequestBody ActualizarRequest request) {
         String filename = request.getFilename();
+        int id_usuario = request.getId_usuario();
         String hostExt = request.getHostExtremo();
         int portExt = request.getPortExtremo();
         String extremoUrl = hostExt + ":" + portExt;
-        System.out.println("200 ok");
-        //acá deberia ir la conexion a la bd 
+        insertUsuario(id_usuario,hostExt,portExt);
+        insertArchivo(id_usuario,filename);
         return ResponseEntity.ok("Archivo "+filename+" recibido correctamente, lo envio el extremo: "+extremoUrl+".");
 }
 
@@ -64,4 +68,13 @@ public class MaestroController {
         System.out.println("Mensaje recibido: " + mensaje);
         return ResponseEntity.ok("Mensaje recibido correctamente");
     }
+
+    public void insertArchivo(int userId,String fileName) {
+        postgresController.insertArchivo(userId, fileName);
+    }
+
+     public void insertUsuario(int userId,String ip,int port) {
+        postgresController.insertUsuario(userId, ip, port);
+    }
+
 }

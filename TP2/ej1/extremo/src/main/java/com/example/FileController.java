@@ -47,10 +47,10 @@ public class FileController {
     @Autowired
     private Environment env;
     /*
-    curl -X POST -F "file=@a.txt" -F "host=localhost" -F "port=8088" http://localhost:8081/cargar
+    curl -X POST -F "file=@a.txt" -F "host=localhost" -F "id_usuario=12"" -F "port=8088" http://localhost:8081/cargar
     */
     @PostMapping(value = "/cargar", consumes = "multipart/form-data")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("host") String host, @RequestParam("port") int port) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("host") String host, @RequestParam("port") int port, @RequestParam("id_usuario") int id_usuario) {
         try {
             // Guardar el archivo en la carpeta especificada
             String filename = file.getOriginalFilename();
@@ -68,6 +68,7 @@ public class FileController {
             Map<String, Object> params = new HashMap<>();
             params.put("filename", filename);
             params.put("hostExtremo", hostExtremo);
+            params.put("id_usuario", id_usuario);
             params.put("portExtremo", portExtremo);
             Gson gson = new Gson();
             String json = gson.toJson(params);
