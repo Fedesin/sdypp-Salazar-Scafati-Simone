@@ -4,7 +4,7 @@ public class Maestro {
     private String host;
     private int port;
 
-    public extremo(String host, int port) {
+    public Maestro(String host, int port) {
         this.host = host;
         this.port = port;
     }

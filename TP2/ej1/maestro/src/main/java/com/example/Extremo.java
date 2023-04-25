@@ -3,10 +3,12 @@ package main.java.com.example;
 public class Extremo {
     private String host;
     private int port;
+    private String namefile;
 
-    public extremo(String host, int port) {
+    public Extremo(String host, int port,String namefile) {
         this.host = host;
         this.port = port;
+        this.namefile = namefile;
     }
 
     public String host() {
@@ -15,5 +17,9 @@ public class Extremo {
 
     public int port() {
         return this.port;
+    }
+    
+     public String namefile() {
+        return this.namefile;
     }
 }

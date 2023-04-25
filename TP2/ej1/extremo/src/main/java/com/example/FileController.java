@@ -25,10 +25,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.example.Maestro;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 public class FileController {
-    
+    @Autowired
+    private RestTemplate restTemplate;
     /*
     curl -X POST -H "Content-Type: multipart/form-data" -F "file=@archivo.txt" http://localhost:8081/cargar
     */
@@ -39,24 +48,19 @@ public class FileController {
             String filename = file.getOriginalFilename();
             Path filepath = Paths.get("./archivos", filename);
             Files.write(filepath, file.getBytes());
-            
-            String maestroUrl = maestro.host();
+            String maestroUrl = "http://";
+            maestroUrl += maestro.host();
             maestroUrl += ":"+maestro.port()+"/actualizar";
 
-            String respuesta = restTemplate.postForObject(maestroUrl, file, String.class);
-            return "Archivo enviado correctamente: " + filename + "\nRespuesta del maestro "+maestro.host()+": " + respuesta;
+            String respuesta = restTemplate.postForObject(maestroUrl, filename,String.class);
+             return ResponseEntity.ok("Archivo enviado correctamente: " + filename + "\nRespuesta del maestro : " + respuesta);
             
-            //---
-            // FALTA HACER EL POST /Actualizar al maestro
-            // enviar nombre del archivo,ip y puerto del extremo
-            //---
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el archivo");
         }
-        return ResponseEntity.ok("Archivo recibido y guardado correctamente");
     }
-
+/*
     @GetMapping("/getArchivo")
     public ResponseEntity<Resource> getArchivo(@RequestParam(name = "nombre") String nombreArchivo) {
              //---
@@ -72,7 +76,7 @@ public class FileController {
             // LUEGO HACER UN GET /descargar al extremo
             //---
     }
-
+*/
     /*
     curl -o archivo.txt http://localhost:8081/descargar?nombre=archivo.txt
     */

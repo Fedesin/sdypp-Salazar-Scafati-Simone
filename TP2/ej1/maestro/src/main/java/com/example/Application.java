@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class Application{
 
     public static void main(String[] args) {
+        System.setProperty("server.port", "8088");
         SpringApplication.run(Application.class, args);
     }
 }
