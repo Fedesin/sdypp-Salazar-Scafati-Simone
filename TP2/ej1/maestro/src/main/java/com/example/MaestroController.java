@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import main.java.com.example.Extremo;
+import com.example.Extremo;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ import com.google.gson.Gson;
 import java.util.Map;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import main.java.com.example.ActualizarRequest;
+import com.example.ActualizarRequest;
 
 @RestController
 @RequestMapping("/maestro")
