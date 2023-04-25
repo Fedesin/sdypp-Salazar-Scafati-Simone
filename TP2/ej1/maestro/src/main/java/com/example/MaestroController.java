@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import main.java.com.example.Extremo;
 
 @RestController
 @RequestMapping("/maestro")
@@ -51,23 +52,6 @@ public class MaestroController {
         }
         return ResponseEntity.ok("Archivo recibido y guardado correctamente");
     }
-public class extremo {
-    private String host;
-    private int port;
-
-    public extremo(String host, int port) {
-        this.host = host;
-        this.port = port;
-    }
-
-    public String host() {
-        return this.host;
-    }
-
-    public int port() {
-        return this.port;
-    }
-}
     @PostMapping("/mensaje")
     public ResponseEntity<String> recibirMensaje(@RequestBody String mensaje) {
         System.out.println("Mensaje recibido: " + mensaje);
