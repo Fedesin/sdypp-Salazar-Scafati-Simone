@@ -77,21 +77,63 @@ public class FileController {
             HttpEntity<String> entity = new HttpEntity<>(json, headers);
             String respuesta = restTemplate.postForObject(maestroUrl, entity, String.class);
             return ResponseEntity.ok("Archivo enviado correctamente: " + filename + "\nRespuesta del maestro : " + respuesta);
-            
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el archivo");
         }
     }
-/*
-    @GetMapping("/getArchivo")
-    public ResponseEntity<Resource> getArchivo(@RequestParam(name = "nombre") String nombreArchivo) {
-             //---
-            // FALTA HACER EL GET /PropietarioDelArchivo al maestro
-            // LUEGO HACER UN GET /descargar al extremo
-            //---
-    }
 
+    /*
+    curl -X POST -F "filename=a.txt" -F "host=localhost" -F "port=8088" -F "id_usuario=12" http://localhost:8081/cargar
+    */
+    //id usuario de quien soy yo, host y puerto del extremo a conectarme, y filename del nombre del archivo a descargar
+    @GetMapping("/descargar")
+    public ResponseEntity<Resource> descargar(@RequestParam("filename") String filename, @RequestParam("host") String host, @RequestParam("port") int port, @RequestParam("id_usuario") int id_usuario){
+            // recibo el nombre del archivo a bajar, la ip del maestro a cual consulto
+            // si no existe el maestro me devuelve un 404 y devuelvo eso al cliente y listo
+            // si existe llamo al getArchivo y le paso el name y la dir ip q me haya devuelto el maestro
+            // llamo al actualizar del maestro
+            // y devuelvo 200 ok al cliente
+            try {
+                // consulto al maestro si eso existe
+                maestroUrl += host;
+                maestroUrl += ":"+port+"/maestro/consultar";
+                RestTemplate restTemplate = new RestTemplate();
+                Map<String, Object> params = new HashMap<>();
+                params.put("filename", filename);
+                Gson gson = new Gson();
+                String json = gson.toJson(params);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<String> entity = new HttpEntity<>(json, headers);
+                //la idea es que me devuelva la dir ip y el port de quien tiene el filename
+                String respuesta = restTemplate.postForObject(maestroUrl, entity, String.class);
+                if (respuesta!="404"){
+                    //Si llegue acá es porque el archivo existe, alguien lo tiene
+                    respuesta +="/getArchivo";
+                    extremoUrl = respuesta;
+                    RestTemplate restTemplate2 = new RestTemplate();
+                    Map<String, Object> params2 = new HashMap<>();
+                    params2.put("filename", filename);
+                    Gson gson2 = new Gson();
+                    String json2 = gson.toJson(params);
+                    HttpHeaders headers2 = new HttpHeaders();
+                    headers2.setContentType(MediaType.APPLICATION_JSON);
+                    HttpEntity<String> entity2 = new HttpEntity<>(json, headers);
+                    entity2 = restTemplate.postForObject(extremoUrl, entity2, String.class);
+                    // tengo en el body de la entity2 el archivo, ahora deberia llamar a la funcion uploadFile, pasandole
+                    // el archivo en cuestion, mi ip y mi puerto y el id_usuario que es pasado al comienzo de la funcion.
+                    uploadFile(entity2.body, ip.getHostAddress(), Integer.parseInt(env.getProperty("server.port"), id_usuario));
+                    return ResponseEntity.ok("Archivo descargado correctamente: " + filename+" Descargado de: "+extremoUrl);
+                }else{
+                    return ResponseEntity.notFound(404);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al Descargar el archivo");
+            }
+    }
+/*
     @GetMapping("/GET ArchivosDisponibles")
     public ResponseEntity<Resource> ArchivosDisponibles() {
              //---
@@ -103,8 +145,8 @@ public class FileController {
     /*
     curl -o archivo.txt http://localhost:8081/descargar?nombre=archivo.txt
     */
-   @GetMapping("/descargar")
-    public ResponseEntity<Resource> descargar(@RequestParam(name = "nombre") String nombreArchivo) {
+   @GetMapping("/getArchivo")
+    public ResponseEntity<Resource> getArchivo(@RequestParam(name = "nombre") String nombreArchivo) {
     // Obtener el archivo del servidor a partir del nombre
     File archivo = new File("./archivos/" + nombreArchivo);
 
