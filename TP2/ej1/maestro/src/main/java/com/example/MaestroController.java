@@ -40,6 +40,9 @@ import java.util.Map;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import com.example.ActualizarRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestController
 @RequestMapping("/maestro")
@@ -69,12 +72,34 @@ public class MaestroController {
         return ResponseEntity.ok("Mensaje recibido correctamente");
     }
 
+    @GetMapping("/usuario_IP_Port/{id}")
+    @ResponseBody
+    public String usuario_IP_Port(@PathVariable int id) {
+        String[] usuario = postgresController.getUsuario(id);
+        Gson gson = new Gson();
+        return gson.toJson(new Usuario(usuario[0], Integer.parseInt(usuario[1])));
+    }
+
+    // Usuario class
+    class Usuario {
+        private String ip;
+        private int port;
+    public Usuario(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
+    }
+
     public void insertArchivo(int userId,String fileName) {
         postgresController.insertArchivo(userId, fileName);
     }
 
      public void insertUsuario(int userId,String ip,int port) {
         postgresController.insertUsuario(userId, ip, port);
+    }
+
+    public String[] getUsuario(int userId) {
+       return postgresController.getUsuario(userId);
     }
 
 }

@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -53,4 +54,33 @@ public class PostgresController {
             e.printStackTrace();
         }   
     }
+     
+    public String[] getUsuario(int userId) {
+    String[] result = new String[2];
+    try {
+        Connection conn = DriverManager.getConnection(url, username, password);
+
+        // Retrieve data from usuario table
+        String usuarioSelect = "SELECT ip, puerto FROM usuario WHERE id_usuario = ?";
+        PreparedStatement usuarioStatement = conn.prepareStatement(usuarioSelect);
+        usuarioStatement.setInt(1, userId);
+        ResultSet usuarioResult = usuarioStatement.executeQuery();
+        if (usuarioResult.next()) {
+            result[0] = usuarioResult.getString("ip");
+            result[1] = usuarioResult.getInt("puerto") + "";
+        } else {
+           result[0] = "Usuario no existe";
+            result[1] = "0";
+        }
+
+        usuarioResult.close();
+         usuarioStatement.close();
+         conn.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }   
+    return result;
+    }
+
+
 }
