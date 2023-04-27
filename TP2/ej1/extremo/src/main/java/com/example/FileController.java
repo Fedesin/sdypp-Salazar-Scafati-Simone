@@ -1,8 +1,5 @@
 package com.example;
 import java.io.File;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -11,20 +8,24 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.google.gson.Gson;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.google.gson.Gson;
 
 @RestController
 public class FileController {
@@ -34,6 +35,7 @@ public class FileController {
     private Environment env;
     /*
     curl -X POST -F "file=@a.txt" -F "host=localhost" -F "id_usuario=12"" -F "port=8088" http://localhost:8081/cargar
+    curl -X POST -F "file=@/ruta/al/archivo/a/subir" -F "host=localhost" -F "port=8088" -F "id_usuario=12" http://localhost:8081/cargar
     */
     @PostMapping(value = "/cargar", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("host") String host, @RequestParam("port") int port, @RequestParam("id_usuario") int id_usuario) {
@@ -70,7 +72,8 @@ public class FileController {
     }
 
     /*
-    curl -X POST -F "filename=a.txt" -F "host=localhost" -F "port=8088" -F "id_usuario=12" http://localhost:8081/cargar
+    curl -X GET -F "filename=a.txt" -F "host=localhost" -F "port=8088" -F "id_usuario=12" http://localhost:8081/descargar
+    curl -X GET "http://localhost:8081/descargar?filename=a.txt&host=localhost&port=8088&id_usuario=12"
     */
     //id usuario de quien soy yo, host y puerto del extremo a conectarme, y filename del nombre del archivo a descargar
     @GetMapping("/descargar")
