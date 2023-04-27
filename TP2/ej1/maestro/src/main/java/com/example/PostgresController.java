@@ -88,7 +88,7 @@ public class PostgresController {
             Connection conn = DriverManager.getConnection(url, username, password);
     
             // Retrieve data from usuario table
-            String usuarioSelect = "SELECT ip, puerto FROM usuario WHERE nombre_archivo = ?";
+            String usuarioSelect = "SELECT ip, puerto FROM usuario WHERE nombre_archivo ="+filename;
             PreparedStatement usuarioStatement = conn.prepareStatement(usuarioSelect);
             usuarioStatement.setString(1, filename);
             ResultSet usuarioResult = usuarioStatement.executeQuery();

@@ -103,7 +103,6 @@ public ResponseEntity<String> descargar(@RequestParam("filename") String filenam
         // Enviar una solicitud POST al servidor maestro para verificar si el archivo existe
         // y obtener la dirección IP y el número de puerto del servidor que lo tiene
         String respuesta = restTemplate.postForObject(maestroUrl, entity, String.class);
-        
         if (!respuesta.equals("404")){
             // Si el archivo existe, construir una URL para descargarlo del servidor que lo tiene
             String extremoUrl = "http://" + respuesta + "/getArchivo";
@@ -116,8 +115,10 @@ public ResponseEntity<String> descargar(@RequestParam("filename") String filenam
             params2.put("filename", filename);
             
             // Enviar una solicitud POST al servidor que tiene el archivo para descargarlo
+            System.out.println("BANDERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             ResponseEntity<byte[]> response = restTemplate2.postForEntity(extremoUrl, entity, byte[].class);
-            
+            System.out.println("2BANDERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
             // Guardar el archivo descargado como un objeto MultipartFile
             MultipartFile archivo = new MockMultipartFile("file", response.getBody());
             
