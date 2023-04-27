@@ -82,5 +82,32 @@ public class PostgresController {
     return result;
     }
 
+    public String[] getUsuario(String filename) {
+        String[] result = new String[2];
+        try {
+            Connection conn = DriverManager.getConnection(url, username, password);
+    
+            // Retrieve data from usuario table
+            String usuarioSelect = "SELECT ip, puerto FROM usuario WHERE nombre_archivo = ?";
+            PreparedStatement usuarioStatement = conn.prepareStatement(usuarioSelect);
+            usuarioStatement.setString(1, filename);
+            ResultSet usuarioResult = usuarioStatement.executeQuery();
+            if (usuarioResult.next()) {
+                result[0] = usuarioResult.getString("ip");
+                result[1] = usuarioResult.getInt("puerto") + "";
+            } else {
+               result[0] = "Archivo no existe";
+                result[1] = "0";
+            }
+    
+            usuarioResult.close();
+             usuarioStatement.close();
+             conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }   
+        return result;
+        }
+
 
 }

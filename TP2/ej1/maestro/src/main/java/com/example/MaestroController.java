@@ -72,6 +72,20 @@ public class MaestroController {
         return ResponseEntity.ok("Mensaje recibido correctamente");
     }
 
+
+    @GetMapping("/consultar/{filename}")
+    @ResponseBody
+    public String consultar(@PathVariable String filename) {
+        String respuesta;
+        String[] usuario = postgresController.getUsuario(filename);
+        if (usuario[0]!="Archivo no existe"){
+            respuesta=usuario[0]+":"+usuario[1];
+        }else{
+            respuesta="404";
+        }
+        return respuesta;
+    }
+
     @GetMapping("/usuario_IP_Port/{id}")
     @ResponseBody
     public String usuario_IP_Port(@PathVariable int id) {
@@ -97,6 +111,10 @@ public class MaestroController {
      public void insertUsuario(int userId,String ip,int port) {
         postgresController.insertUsuario(userId, ip, port);
     }
+
+    public String[] getUsuario(String filename) {
+        return postgresController.getUsuario(filename);
+     }
 
     public String[] getUsuario(int userId) {
        return postgresController.getUsuario(userId);
