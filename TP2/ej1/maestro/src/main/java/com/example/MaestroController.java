@@ -73,7 +73,7 @@ public class MaestroController {
     }
 
 
-    @PostMapping("/consultar/{filename}")
+    @GetMapping("/consultar/{filename}")
     @ResponseBody
     public String consultar(@PathVariable String filename) {
         String respuesta;

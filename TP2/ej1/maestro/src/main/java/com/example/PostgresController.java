@@ -90,7 +90,8 @@ public class PostgresController {
             // Retrieve data from usuario table
             //String usuarioSelect = "SELECT ip, puerto FROM usuario WHERE nombre_archivo ="+filename;
             //String archivoSelect = "SELECT ip, puerto FROM archivo WHERE nombre_archivo = ?";
-            String archivoSelect = "SELECT u.id_usuario, u.puerto FROM archivo a JOIN usuario u ON a.id_usuario = u.id_usuario WHERE a.nombre_archivo ="+filename;
+            String archivoSelect = 
+            "SELECT u.ip, u.puerto FROM archivo a JOIN usuario u ON a.id_usuario = u.id_usuario WHERE a.nombre_archivo = ?";
             PreparedStatement archivoStatement = conn.prepareStatement(archivoSelect);
             archivoStatement.setString(1, filename);
             ResultSet archivoResult = archivoStatement.executeQuery();
@@ -101,10 +102,9 @@ public class PostgresController {
                 result[0] = "Archivo no existe";
                 result[1] = "0";
             }
-
             archivoResult.close();
-                archivoStatement.close();
-                conn.close();
+            archivoStatement.close();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }   
