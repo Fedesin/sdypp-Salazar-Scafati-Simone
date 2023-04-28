@@ -72,7 +72,6 @@ public class FileController {
     }
 
     /*
-    curl -X GET -F "filename=a.txt" -F "host=localhost" -F "port=8088" -F "id_usuario=12" http://localhost:8081/descargar
     curl -X GET "http://localhost:8081/descargar?filename=a.txt&host=localhost&port=8088&id_usuario=12"
     */
     //id usuario de quien soy yo, host y puerto del extremo a conectarme, y filename del nombre del archivo a descargar
