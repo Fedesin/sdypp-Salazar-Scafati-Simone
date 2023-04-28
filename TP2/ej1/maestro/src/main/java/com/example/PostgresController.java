@@ -86,28 +86,28 @@ public class PostgresController {
         String[] result = new String[2];
         try {
             Connection conn = DriverManager.getConnection(url, username, password);
-    
+
             // Retrieve data from usuario table
-            String usuarioSelect = "SELECT ip, puerto FROM usuario WHERE nombre_archivo ="+filename;
-            PreparedStatement usuarioStatement = conn.prepareStatement(usuarioSelect);
-            usuarioStatement.setString(1, filename);
-            ResultSet usuarioResult = usuarioStatement.executeQuery();
-            if (usuarioResult.next()) {
-                result[0] = usuarioResult.getString("ip");
-                result[1] = usuarioResult.getInt("puerto") + "";
+            //String usuarioSelect = "SELECT ip, puerto FROM usuario WHERE nombre_archivo ="+filename;
+            //String archivoSelect = "SELECT ip, puerto FROM archivo WHERE nombre_archivo = ?";
+            String archivoSelect = "SELECT u.id_usuario, u.puerto FROM archivo a JOIN usuario u ON a.id_usuario = u.id_usuario WHERE a.nombre_archivo ="+filename;
+            PreparedStatement archivoStatement = conn.prepareStatement(archivoSelect);
+            archivoStatement.setString(1, filename);
+            ResultSet archivoResult = archivoStatement.executeQuery();
+            if (archivoResult.next()) {
+                result[0] = archivoResult.getString("ip");
+                result[1] = archivoResult.getInt("puerto") + "";
             } else {
-               result[0] = "Archivo no existe";
+                result[0] = "Archivo no existe";
                 result[1] = "0";
             }
-    
-            usuarioResult.close();
-             usuarioStatement.close();
-             conn.close();
+
+            archivoResult.close();
+                archivoStatement.close();
+                conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }   
         return result;
-        }
-
-
+    }
 }

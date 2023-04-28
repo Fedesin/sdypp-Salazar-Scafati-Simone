@@ -115,7 +115,7 @@ public ResponseEntity<String> descargar(@RequestParam("filename") String filenam
             params2.put("filename", filename);
             
             // Enviar una solicitud POST al servidor que tiene el archivo para descargarlo
-            System.out.println("BANDERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            System.out.println(extremoUrl+"BANDERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             ResponseEntity<byte[]> response = restTemplate2.postForEntity(extremoUrl, entity, byte[].class);
             System.out.println("2BANDERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
