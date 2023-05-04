@@ -109,7 +109,7 @@ public class FileController {
                 return ResponseEntity.ok("Archivo descargado ");
             } else {
                 // Si el archivo no existe, devolver una respuesta HTTP 404 (NOT FOUND)
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404 "+filename+" Not found");
             }
         } catch (IOException e) {
             // Si se produce una excepción al enviar o recibir la solicitud HTTP, devolver una respuesta HTTP 500 (INTERNAL SERVER ERROR)
