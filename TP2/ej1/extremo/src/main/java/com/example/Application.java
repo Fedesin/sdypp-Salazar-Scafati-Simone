@@ -25,6 +25,10 @@
  */
 
 package com.example;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Random;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +42,10 @@ public class Application{
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-    public static void main(String[] args) {
-        System.setProperty("server.port", "8081");
+    public static void main(String[] args) throws IOException {
+        Random random = new Random();
+        int port = random.nextInt(65535 - 1024) + 1024; // Generar un puerto aleatorio entre 1024 y 65535
+        System.setProperty("server.port",Integer.toString(port));
         SpringApplication.run(Application.class, args);
     }
 }
