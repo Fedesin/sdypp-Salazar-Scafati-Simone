@@ -42,7 +42,7 @@ public class FileController {
         try {
             // Guardar el archivo en la carpeta especificada
             String filename = file.getOriginalFilename();
-            Path filepath = Paths.get("./archivos", filename);
+            Path filepath = Paths.get("/app/archivos", filename);
             Files.write(filepath, file.getBytes());
             String maestroUrl = "http://";
             maestroUrl += host;
@@ -52,7 +52,7 @@ public class FileController {
             InetAddress ip = InetAddress.getLocalHost();
             String hostExtremo = ip.getHostAddress();
             // Obtener el puerto
-            int portExtremo = Integer.parseInt(env.getProperty("server.port"));
+            int portExtremo = port;
             Map<String, Object> params = new HashMap<>();
             params.put("filename", filename);
             params.put("hostExtremo", hostExtremo);
@@ -127,13 +127,13 @@ public class FileController {
     }
 */
     /*
-    curl -o archivo.txt http://localhost:8081/descargar?nombre=archivo.txt
+    curl -o archivo.txt http://localhost:8081/getArchivo?nombre=archivo.txt
     */
    @GetMapping("/getArchivo")
     public ResponseEntity<Resource> getArchivo(@RequestParam(name = "nombre") String nombreArchivo) {
 
         // Obtener el archivo del servidor a partir del nombre
-        File archivo = new File("./archivos/" + nombreArchivo);
+        File archivo = new File("/app/archivos/" + nombreArchivo);
 
         // Verificar si el archivo existe
         if (!archivo.exists()) {

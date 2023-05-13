@@ -14,7 +14,11 @@ services:
     volumes:
       -  db_data:/var/lib/postgresql/data
       - ./create-database.sql:/create-database.sql  
+    networks:
+      - p2p_network
 
+networks:
+  p2p_network:
 
 volumes:
   db_data:

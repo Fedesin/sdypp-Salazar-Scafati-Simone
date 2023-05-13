@@ -1,11 +1,9 @@
-Que es lo que tenemos aca?
+docker network create p2p_network
 
-Esto es en primer instancia el puntapie para arrancar a hacer el ejercicio 1, lo unico que logre hacer de momento es que dos nodos, se puedan conectar entre sí.
-Entonces de esta manera lo unico que tenemos de momento es algo así como el siguiente grafico:
-![Diagrama sin título drawio](https://user-images.githubusercontent.com/91753433/233819167-898dc9d7-4b1b-4411-b6b4-8b0e210d39b3.png)
+docker build -t extremo .
 
-Falta obviamente añadirles todas las funcionalidades restantes y luego dockerizarlos.
+docker run --name extremo -p 8080:8080 -v /home/salva/UNLU/SDPP/sdypp-Salazar-Scafati-Simone/TP2/ej1/extremo/archivos:/app/archivos --network p2p_network extremo
 
+docker build -t maestro .
 
-La idea ya la tenemos, ahora estamos metiendo mano en el codigo, pueden ver el diagrama desde acá
-https://app.diagrams.net/#G1XgO0LdXQtyCLaDlDL_nc0O1noD1JWuN9
+docker run --name maestro -p 8081:8080  --network p2p_network  maestro

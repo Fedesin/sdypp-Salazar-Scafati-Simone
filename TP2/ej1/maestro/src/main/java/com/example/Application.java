@@ -42,10 +42,7 @@ public class Application{
 
     
     public static void main(String[] args) {
-        //System.setProperty("server.port", "8088");
-        Random random = new Random();
-        int port = random.nextInt(65535 - 1024) + 1024; // Generar un puerto aleatorio entre 1024 y 65535
-        System.setProperty("server.port",Integer.toString(port));
+        System.setProperty("server.port","8080");
         SpringApplication.run(Application.class, args);
     }
 }
