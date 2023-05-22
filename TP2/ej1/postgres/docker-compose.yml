@@ -19,6 +19,7 @@ services:
 
 networks:
   p2p_network:
+    external: true
 
 volumes:
   db_data:

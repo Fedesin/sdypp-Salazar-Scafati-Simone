@@ -36,6 +36,7 @@ public class FileController {
     /*
     curl -X POST -F "file=@a.txt" -F "host=localhost" -F "id_usuario=12"" -F "port=8088" http://localhost:8081/cargar
     curl -X POST -F "file=@/ruta/al/archivo/a/subir" -F "host=localhost" -F "port=8088" -F "id_usuario=12" http://localhost:8081/cargar
+     curl -X POST -F "file=@pepe.txt" -F "host=maestro" -F "port=8080" -F "id_usuario=90" http://localhost:59019/cargar
     */
     @PostMapping(value = "/cargar", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("host") String host, @RequestParam("port") int port, @RequestParam("id_usuario") int id_usuario) {
@@ -72,11 +73,12 @@ public class FileController {
     }
 
     /*
-    curl -X GET "http://localhost:8081/descargar?filename=a.txt&host=localhost&port=8088&id_usuario=12"
+    curl -X GET "http://localhost:8080/descargar?filename=a.txt&host=maestro&port=8080&id_usuario=12"
+     curl -X GET "http://localhost:8080/descargar?filename=pepe.txt&host=maestro&port=8080&id_usuario=90"
     */
     //id usuario de quien soy yo, host y puerto del extremo a conectarme, y filename del nombre del archivo a descargar
     @GetMapping("/descargar")
-    public ResponseEntity<String> descargar(@RequestParam("filename") String filename, @RequestParam("host") String host, @RequestParam("port") int port, @RequestParam("id_usuario") int id_usuario){
+    public ResponseEntity<Resource> descargar(@RequestParam("filename") String filename, @RequestParam("host") String host, @RequestParam("port") int port, @RequestParam("id_usuario") int id_usuario){
         try {
             // Construir URL para consultar al servidor maestro si el archivo existe
             String maestroUrl = "http://" + host + ":" + port + "/maestro/consultar/" + filename;
@@ -85,7 +87,7 @@ public class FileController {
             // Enviar una solicitud GET al servidor maestro para verificar si el archivo existe
             // y obtener la dirección IP y el número de puerto del servidor que lo tiene
             String respuesta = restTemplate.getForObject(maestroUrl, String.class);
-            if (!respuesta.equals("404")){
+           
                 // Si el archivo existe, construir una URL para descargarlo del servidor que lo tiene
                 String extremoUrl = "http://" + respuesta + "/getArchivo/?nombre="+filename;
                 // Enviar una solicitud GET al servidor que tiene el archivo para descargarlo
@@ -101,16 +103,25 @@ public class FileController {
                 InetAddress ipLocal = InetAddress.getLocalHost();
                 String hostExtremo = ipLocal.getHostAddress();
                 int portLocal = Integer.parseInt(env.getProperty("server.port"));
-                
+                // Obtener el archivo del servidor a partir del nombre
+                 File archivoDescargado = new File("/app/archivos/" + filename);
+
+                // Verificar si el archivo existe
+                if (!archivoDescargado.exists()) {
+                  return ResponseEntity.notFound().build();
+                  }
+
+                // Crear un recurso de Spring para el archivo
+                 Resource recurso = new FileSystemResource(archivoDescargado);
                 // Llamar al método uploadFile para cargar el archivo descargado en el servidor
                 uploadFile(archivo,hostExtremo,portLocal,id_usuario);
                 
                 // Devolver una respuesta HTTP 200 (OK) con un mensaje indicando que se descargó el archivo correctamente
-                return ResponseEntity.ok("Archivo descargado ");
-            } else {
-                // Si el archivo no existe, devolver una respuesta HTTP 404 (NOT FOUND)
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404 "+filename+" Not found");
-            }
+                     return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + archivo.getName() + "\"")
+                .body(recurso);
+        
         } catch (IOException e) {
             // Si se produce una excepción al enviar o recibir la solicitud HTTP, devolver una respuesta HTTP 500 (INTERNAL SERVER ERROR)
             e.printStackTrace();
