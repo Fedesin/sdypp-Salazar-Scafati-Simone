@@ -95,9 +95,27 @@ public class FileController {
                 // Crear otro objeto RestTemplate para enviar solicitudes HTTP al servidor que tiene el archivo
                 RestTemplate restTemplate2 = new RestTemplate();   
                 ResponseEntity<byte[]> response = restTemplate2.getForEntity(extremoUrl, byte[].class);
-
+                
                 // Guardar el archivo descargado como un objeto MultipartFile
-                MultipartFile archivo = new MockMultipartFile("file", response.getBody());
+                if (response.getStatusCode() == HttpStatus.OK) {
+                 // Get the file bytes from the response
+                 byte[] fileBytes = response.getBody();
+
+                // Define the file path and name where you want to save the file
+                  String filePath = "/app/archivos/" + filename;
+
+                 try {
+                // Save the file to the specified path
+                  Files.write(Paths.get(filePath), fileBytes);
+                  System.out.println("File saved successfully.");
+                  } catch (IOException e) {
+                  // Handle the exception if the file couldn't be saved
+                  System.err.println("Error saving the file: " + e.getMessage());
+                 }
+                }            else {
+                // Handle the case when the server returned an error status
+                 System.err.println("File download failed. Server returned status: " + response.getStatusCodeValue());
+                }
                 
                 // Obtener la dirección IP local y el número de puerto del servidor
                 InetAddress ipLocal = InetAddress.getLocalHost();
@@ -114,12 +132,12 @@ public class FileController {
                 // Crear un recurso de Spring para el archivo
                  Resource recurso = new FileSystemResource(archivoDescargado);
                 // Llamar al método uploadFile para cargar el archivo descargado en el servidor
-                uploadFile(archivo,hostExtremo,portLocal,id_usuario);
+                //uploadFile(archivo,hostExtremo,portLocal,id_usuario);
                 
                 // Devolver una respuesta HTTP 200 (OK) con un mensaje indicando que se descargó el archivo correctamente
                      return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + archivo.getName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +filename+ "\"")
                 .body(recurso);
         
         } catch (IOException e) {
