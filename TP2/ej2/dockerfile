@@ -1,6 +1,0 @@
-FROM openjdk:21-ea-11-slim-bullseye
-RUN apt-get update && \
-    apt-get install -y docker.io netcat
-WORKDIR /app
-COPY target/demo-1.0-SNAPSHOT.jar /app/app.jar
-CMD ["java", "-jar", "/app/app.jar"]

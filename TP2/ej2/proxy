@@ -1,2 +1,0 @@
-Acquire::http::Proxy "http://proxy.unlu.edu.ar:8080";
-Acquire::https::Proxy "http://proxy.unlu.edu.ar:8080";
